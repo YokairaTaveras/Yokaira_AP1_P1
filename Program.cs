@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Yokaira_AP1_P1.Data;
+using Microsoft.EntityFrameworkCore;
+using Yokaira_AP1_P1.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
 
+builder.Services.AddDbContext<Context>(op => op.UseSqlite(ConStr));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
