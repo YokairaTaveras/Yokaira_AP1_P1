@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Yokaira_AP1_P1.DAL;
 using Radzen;
+using Yokaira_AP1_P1.BLL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ var ConStr = builder.Configuration.GetConnectionString("ConStr");
 
 builder.Services.AddDbContext<Context>(op => op.UseSqlite(ConStr));
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<AportesBLL>();
 
 var app = builder.Build();
 
