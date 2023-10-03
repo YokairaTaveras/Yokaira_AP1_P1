@@ -1,14 +1,37 @@
 ﻿@using Yokaira_AP1_P1.BLL;
 @using Yokaira_AP1_P1.Models;
 @page "/AportesConsultas"
-@inject AportesBLL AportesBLL
+@inject AportesBLL aportesBLL
 
+<div class="row">
+    <div class="form-group col">
+        <label>Desde</label>
+        <InputDate @bind-Value="Desde" class="form-control" />
+    </div>
+    <div class="form-group col">
+        <label>Hasta</label>
+        <InputDate @bind-Value="Hasta" class="form-control" />
+    </div>
+</div>
+<InputSelect id="options" @bind-Value="Opciones">
+    <option value="1" selected>ID</option>
+    <option value="2">Persona</option>
+</InputSelect>
+@if(Opciones == 1)
+{
+    <InputNumber @bind-Value="filtrarID" class="form-control"></InputNumber>
+}
+@if(Opciones == 2)
+{
+    <InputText @bind-Value="filtrarPersona" class="form-control"></InputText>
+}
 <label>ID</label>
 <div class="input-group">
-    <InputNumber @bind-Value="filtrar" class="form-control"></InputNumber>
+    <InputNumber @bind-Value="filtrarID" class="form-control"></InputNumber>
     <button type="button" class="btn btn-outline-primary oi oi-magnifying-glass" @onclick="Buscar"></button>
     <button type="button" class="btn btn-outline-primary oi oi-reload" @onclick="Reiniciar"></button>
 </div>
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -17,6 +40,7 @@
             <th>Persona</th>
             <th>Observacion</th>           
             <th>Monto</th>
+            <th>Ver</th>
         </tr>
     </thead>
     <tbody>
@@ -28,29 +52,48 @@
                 <td>@item.Persona</td>
                 <td>@item.Observacion</td>
                 <td>@item.Monto</td>
+                <td><a href="RegistroAportes/@item.AporteId">Ver</a></td>
             </tr>
         }
     </tbody>
 </table>
-
+<p>Conteo: @L_Aportes.Count()</p>
 @code {
     public Aportes aportes { get; set; } = new Aportes();
     public string mensaje = string.Empty;
-    public int filtrar { get; set; }
+    public int filtrarID { get; set; }
+    public string filtrarPersona = string.Empty;
     public List<Aportes> L_Aportes { get; set; } = new List<Aportes>();
+    public DateTime Desde;
+    public DateTime Hasta;
+    public int Opciones;
 
     protected override void OnInitialized()
     {
-        L_Aportes = AportesBLL.Listar(a => true);
+        L_Aportes = aportesBLL.Listar(a => true);
+        Desde = DateTime.Now.AddMonths(-1);
+        Hasta = DateTime.Now;
     }
 
     public void  Buscar()
     {
-        L_Aportes = AportesBLL.Listar(a => a.AporteId ==filtrar);
+        if(Opciones == 0)
+        {
+            if(filtrarID <= 0)
+                L_Aportes = aportesBLL.Listar(a => a.Fecha >= Desde.Date && a.Fecha <= Hasta);
+            else 
+                L_Aportes = aportesBLL.Listar(a => a.AporteId == filtrarID && a.Fecha >= Desde.Date && a.Fecha <= Hasta);
+        }   
+        else if(Opciones == 2)
+        {
+            if(filtrarID <= 0)
+                L_Aportes = aportesBLL.Listar(a => a.Fecha >= Desde.Date && a.Fecha <= Hasta);
+            else 
+                L_Aportes = aportesBLL.Listar(a => a.Persona == filtrarPersona && a.Fecha >= Desde.Date && a.Fecha <= Hasta);
+        }
     }
-
     public void Reiniciar()
     {
-        L_Aportes = AportesBLL.Listar(a => true);
+        L_Aportes = aportesBLL.Listar(a => true);
     }
 }
