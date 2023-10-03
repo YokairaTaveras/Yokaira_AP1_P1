@@ -71,7 +71,7 @@
 
     void Guardar()
     {
-        if (Validate())
+        if (!Validate())
         {
             var mensaje = new NotificationMessage
                 {
