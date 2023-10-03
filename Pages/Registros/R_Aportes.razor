@@ -1,0 +1,125 @@
+﻿@page "/RegistroAportes"
+@using Yokaira_AP1_P1.Models;
+@using Yokaira_AP1_P1.Pages.Consultas;
+@inject AportesBLL AportesBLL
+@inject NotificationService notificationService
+
+<EditForm model="Aportes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Aportes.</h3>
+            </div>
+            <div class=card-body>
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>ID Aporte:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="aportes.AporteId" class="form-control" aria-describedby="BotonBuscar" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Fecha">Fecha:</label>
+                    <InputDate @bind-Value="aportes.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => aportes.Fecha)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Persona">Persona:</label>
+                    <InputText @bind-Value="aportes.Persona" class="form-control" />
+                    <ValidationMessage For="@(() => aportes.Persona)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Observacion">Observacion:</label>
+                    <InputText @bind-Value="aportes.Observacion" class="form-control" />
+                    <ValidationMessage For="@(() => aportes.Observacion)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Monto">Monto:</label>
+                    <InputNumber @bind-Value="aportes.Monto" class="form-control" />
+                    <ValidationMessage For="@(() => aportes.Monto)" />
+
+                    <div class="card-footer d-flex justify-content-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+                            <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
+                            <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</EditForm>
+
+@code {
+    public int AporteId { get; set; }
+    public Aportes aportes { get; set; } = new Aportes();
+
+    public void Buscar()
+    {
+        var aporteEncontrado = AportesBLL.Buscar(aportes.AporteId);
+
+        if (aporteEncontrado != null)
+        {
+            this.aportes = aporteEncontrado;
+        }
+    }
+
+    void Guardar()
+    {
+        if (Validate())
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "se guardo",
+                    Detail = "Se ha guardado con exito",
+                    Duration = 4_000
+                };
+            notificationService.Notify(mensaje);
+        }
+
+        if (AportesBLL.Guardar(aportes))
+        {
+            Nuevo();
+        }
+    }
+
+    void Nuevo()
+    {
+       aportes = new Aportes();
+    }
+
+    public void Eliminar()
+    {
+        if (Validate())
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "se elimino",
+                    Detail = "Se ha eliminado con exito",
+                    Duration = 4_000
+                };
+            notificationService.Notify(mensaje);
+            if (AportesBLL.Eliminar(this.aportes))
+            {
+                Nuevo();
+            }
+        }
+    }
+
+    bool Validate()
+    {
+        if (aportes.AporteId < 0)
+            return false;
+        if (aportes.Monto < 0)
+            return false;
+        else
+            return true;
+    }
+}

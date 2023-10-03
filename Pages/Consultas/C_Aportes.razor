@@ -1,0 +1,56 @@
+﻿@using Yokaira_AP1_P1.BLL;
+@using Yokaira_AP1_P1.Models;
+@page "/AportesConsultas"
+@inject AportesBLL AportesBLL
+
+<label>ID</label>
+<div class="input-group">
+    <InputNumber @bind-Value="filtrar" class="form-control"></InputNumber>
+    <button type="button" class="btn btn-outline-primary oi oi-magnifying-glass" @onclick="Buscar"></button>
+    <button type="button" class="btn btn-outline-primary oi oi-reload" @onclick="Reiniciar"></button>
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>AporteId</th>
+            <th>Fecha</th>
+            <th>Persona</th>
+            <th>Observacion</th>           
+            <th>Monto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in L_Aportes)
+        {
+            <tr>
+                <td>@item.AporteId</td>
+                <td>@item.Fecha</td>
+                <td>@item.Persona</td>
+                <td>@item.Observacion</td>
+                <td>@item.Monto</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    public Aportes aportes { get; set; } = new Aportes();
+    public string mensaje = string.Empty;
+    public int filtrar { get; set; }
+    public List<Aportes> L_Aportes { get; set; } = new List<Aportes>();
+
+    protected override void OnInitialized()
+    {
+        L_Aportes = AportesBLL.Listar(a => true);
+    }
+
+    public void  Buscar()
+    {
+        L_Aportes = AportesBLL.Listar(a => a.AporteId ==filtrar);
+    }
+
+    public void Reiniciar()
+    {
+        L_Aportes = AportesBLL.Listar(a => true);
+    }
+}
