@@ -1,4 +1,5 @@
 ﻿@page "/RegistroAportes"
+@page "/RegistroAportes/{AporteId:int}"
 @using Yokaira_AP1_P1.Models;
 @using Yokaira_AP1_P1.Pages.Consultas;
 @inject AportesBLL AportesBLL
@@ -56,8 +57,18 @@
 </EditForm>
 
 @code {
+    [Parameter]
     public int AporteId { get; set; }
     public Aportes aportes { get; set; } = new Aportes();
+
+    protected override void OnInitialized()
+    {
+        if(AporteId > 0)
+        {
+            aportes.AporteId = AporteId;
+            Buscar();
+        }
+    }
 
     public void Buscar()
     {
@@ -71,55 +82,61 @@
 
     void Guardar()
     {
-        if (!Validate())
+        if (Validate())
         {
-            var mensaje = new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "se guardo",
-                    Detail = "Se ha guardado con exito",
-                    Duration = 4_000
-                };
-            notificationService.Notify(mensaje);
-        }
 
-        if (AportesBLL.Guardar(aportes))
-        {
-            Nuevo();
-        }
+            if (AportesBLL.Guardar(aportes))
+            {
+                Nuevo();
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "se guardo",
+                        Detail = "Se ha guardado con exito",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
+            }
+        }     
     }
 
     void Nuevo()
     {
-       aportes = new Aportes();
+        aportes = new Aportes();
     }
 
     public void Eliminar()
     {
         if (Validate())
         {
-            var mensaje = new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "se elimino",
-                    Detail = "Se ha eliminado con exito",
-                    Duration = 4_000
-                };
-            notificationService.Notify(mensaje);
             if (AportesBLL.Eliminar(this.aportes))
             {
                 Nuevo();
+                var mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Eliminado",
+                        Detail = "Se ha eliminado con exito",
+                        Duration = 4_000
+                    };
+                notificationService.Notify(mensaje);
             }
+        }
+        else
+        {
+            var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error",
+                    Detail = "No se podo eliminar",
+                    Duration = 4_000
+                };
+            notificationService.Notify(mensaje);
         }
     }
 
     bool Validate()
     {
-        if (aportes.AporteId < 0)
-            return false;
-        if (aportes.Monto < 0)
-            return false;
-        else
-            return true;
+            return aportes.AporteId >= 0 || aportes.Monto > 0;
     }
 }
