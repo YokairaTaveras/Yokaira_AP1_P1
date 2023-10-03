@@ -15,17 +15,16 @@ namespace Yokaira_AP1_P1.Migrations
                 name: "aporte",
                 columns: table => new
                 {
-                    AportesId = table.Column<int>(type: "INTEGER", nullable: false)
+                    AporteId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Persona = table.Column<string>(type: "TEXT", nullable: false),
-                    Observacion = table.Column<string>(type: "TEXT", nullable: false),
-                    Monto = table.Column<int>(type: "INTEGER", nullable: false),
-                    AporteId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Persona = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Observacion = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Monto = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_aporte", x => x.AportesId);
+                    table.PrimaryKey("PK_aporte", x => x.AporteId);
                 });
         }
 

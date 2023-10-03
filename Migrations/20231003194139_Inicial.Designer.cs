@@ -11,7 +11,7 @@ using Yokaira_AP1_P1.DAL;
 namespace Yokaira_AP1_P1.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231003183515_Inicial")]
+    [Migration("20231003194139_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -22,11 +22,8 @@ namespace Yokaira_AP1_P1.Migrations
 
             modelBuilder.Entity("Yokaira_AP1_P1.Models.Aportes", b =>
                 {
-                    b.Property<int>("AportesId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("AporteId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Fecha")
@@ -37,13 +34,15 @@ namespace Yokaira_AP1_P1.Migrations
 
                     b.Property<string>("Observacion")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Persona")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("AportesId");
+                    b.HasKey("AporteId");
 
                     b.ToTable("aporte");
                 });
