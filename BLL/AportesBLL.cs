@@ -32,11 +32,13 @@ namespace Yokaira_AP1_P1.BLL
         }
         public bool Modificar(Aportes aportes)
         {
-            _context.aporte.Entry(_context.aporte.Find(aportes)!).State = EntityState.Modified;
+            _context.aporte.Entry(_context.aporte.Find(aportes.AporteId)!).State = EntityState.Detached;
+            _context.aporte.Entry(aportes).State = EntityState.Modified;
             return _context.SaveChanges() > 0;
         }
         public bool Eliminar(Aportes aportes)
         {
+            _context.aporte.Entry(_context.aporte.Find(aportes.AporteId)!).State = EntityState.Detached;
             _context.aporte.Remove(aportes);
             int eliminado = _context.SaveChanges();
             return eliminado > 0;
